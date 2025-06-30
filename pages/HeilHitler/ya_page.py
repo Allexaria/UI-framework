@@ -13,6 +13,7 @@ class YaPage:
 
     def open(self):
         self.driver.get('https://ya.ru')
+        print("penis")
 
     def get_body_text(self):
         return self.driver.find_element(By.XPATH, '/html/body').text
