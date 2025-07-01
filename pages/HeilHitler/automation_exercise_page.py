@@ -271,49 +271,24 @@ class AutoExercise:
         assert all_products.is_displayed(), "'All Products' title not visible"
 
     def details(self):
-        scroll = WebDriverWait(self.driver, 10).until(
-            EC.presence_of_element_located((By.CSS_SELECTOR, 'a[href="/product_details/21"]'))
-        )
+        wait = WebDriverWait(self.driver, 10)
 
-        self.driver.execute_script("""
-                arguments[0].scrollIntoView({behavior: 'auto', block: 'start'});
-                window.scrollBy(0, 100);
-            """, scroll)
-
-        view_product = WebDriverWait(self.driver, 10).until(
+        view_product = wait.until(
             EC.presence_of_element_located((By.CSS_SELECTOR, 'a[href="/product_details/18"]'))
         )
-        view_product.click()
+        self.driver.execute_script("arguments[0].scrollIntoView({behavior: 'auto', block: 'center'});", view_product)
+        wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, 'a[href="/product_details/18"]'))).click()
 
-        name = WebDriverWait(self.driver, 10).until(
-            EC.presence_of_element_located((By.XPATH, "//h2[contains(text(), 'Little Girls Mr. Panda Shirt')]"))
-        )
-        assert name.is_displayed(), "Product name is not displayed"
+        wait.until(
+            EC.visibility_of_element_located((By.XPATH, "//h2[contains(text(), 'Little Girls Mr. Panda Shirt')]")))
+        wait.until(
+            EC.visibility_of_element_located((By.XPATH, "//p[contains(text(), 'Category: Kids > Tops & Shirts')]")))
+        wait.until(EC.visibility_of_element_located((By.XPATH, "//span[contains(text(), 'Rs. 1200')]")))
+        wait.until(EC.visibility_of_element_located((By.XPATH, "//b[contains(text(), 'Availability')]")))
+        wait.until(EC.visibility_of_element_located((By.XPATH, "//b[contains(text(), 'Condition')]")))
+        wait.until(EC.visibility_of_element_located((By.XPATH, "//b[contains(text(), 'Brand')]")))
 
-        category = WebDriverWait(self.driver, 10).until(
-            EC.presence_of_element_located((By.XPATH, "//p[contains(text(), 'Category: Kids > Tops & Shirts')]"))
-        )
-        assert category.is_displayed(), "Category is not displayed"
-
-        price = WebDriverWait(self.driver, 10).until(
-            EC.presence_of_element_located((By.XPATH, "//span[contains(text(), 'Rs. 1200')]"))
-        )
-        assert price.is_displayed(), "Price is not displayed"
-
-        availability = WebDriverWait(self.driver, 10).until(
-            EC.presence_of_element_located((By.XPATH, "//b[contains(text(), 'Availability')]"))
-        )
-        assert availability.is_displayed(), "Availability is not displayed"
-
-        condition = WebDriverWait(self.driver, 10).until(
-            EC.presence_of_element_located((By.XPATH, "//b[contains(text(), 'Condition')]"))
-        )
-        assert condition.is_displayed(), "Condition is not displayed"
-
-        brand = WebDriverWait(self.driver, 10).until(
-            EC.presence_of_element_located((By.XPATH, "//b[contains(text(), 'Brand')]"))
-        )
-        assert brand.is_displayed(), "Brand is not displayed"
+        print("Product details successfully verified.")
 
     def fill_email_and_password(self, email, password):
         email_input = WebDriverWait(self.driver, 10).until(
@@ -470,8 +445,9 @@ class AutoExercise:
         view_product_button = wait.until(
             EC.presence_of_element_located((By.CSS_SELECTOR, "a[href='/product_details/1']"))
         )
-        self.driver.execute_script("arguments[0].scrollIntoView(true);", view_product_button)
-        view_product_button.click()
+        self.driver.execute_script("arguments[0].scrollIntoView({behavior: 'auto', block: 'center'});",
+                                   view_product_button)
+        wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, "a[href='/product_details/1']"))).click()
 
     def increase_quantity_to_4(self):
         wait = WebDriverWait(self.driver, 10)
