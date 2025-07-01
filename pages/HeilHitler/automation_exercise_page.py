@@ -125,17 +125,17 @@ class AutoExercise:
         assert username in text, f"Ожидали увидеть '{username}' в тексте, но получили: «{text}»"
 
     def delete_account(self):
-        delete = WebDriverWait(self.driver, 10).until(
+        delete = WebDriverWait(self.driver, 3).until(
             EC.presence_of_element_located((By.CSS_SELECTOR, "a[href='/delete_account']"))
         )
         delete.click()
-        element = WebDriverWait(self.driver, 10).until(
+        element = WebDriverWait(self.driver, 3).until(
            EC.presence_of_element_located((By.XPATH, "//*[@class='title text-center']"))
         )
         assert element.text.strip() == "ACCOUNT DELETED!", \
             f"Ожидали текст 'ACCOUNT DELETED!', но получили: «{element.text.strip()}»"
 
-        cont = WebDriverWait(self.driver, 10).until(
+        cont = WebDriverWait(self.driver, 3).until(
             EC.presence_of_element_located((By.XPATH, "//*[@data-qa='continue-button']"))
         )
         cont.click()
@@ -418,37 +418,43 @@ class AutoExercise:
         assert successfully.is_displayed(),  'You have been successfully subscribed!'
 
     def product_add_to_cart(self):
-        add_to_cart_button = WebDriverWait(self.driver, 10).until(
+        wait = WebDriverWait(self.driver, 10)
+
+        add_to_cart_button = wait.until(
             EC.presence_of_element_located((By.XPATH, '//a[@data-product-id="1"]'))
         )
+        self.driver.execute_script("arguments[0].scrollIntoView(true);", add_to_cart_button)
         add_to_cart_button.click()
 
-        continue_button = WebDriverWait(self.driver, 10).until(
-            EC.element_to_be_clickable((By.XPATH, '//button[text()="Continue Shopping"]'))  # пример
+        continue_button = wait.until(
+            EC.element_to_be_clickable((By.XPATH, '//button[text()="Continue Shopping"]'))
         )
+        self.driver.execute_script("arguments[0].scrollIntoView(true);", continue_button)
         continue_button.click()
 
-        second_product_button = WebDriverWait(self.driver, 10).until(
+        second_product_button = wait.until(
             EC.presence_of_element_located((By.XPATH, '//a[@data-product-id="2"]'))
         )
+        self.driver.execute_script("arguments[0].scrollIntoView(true);", second_product_button)
         second_product_button.click()
 
-        view_cart_button = WebDriverWait(self.driver, 10).until(
-            EC.element_to_be_clickable((By.XPATH,'//u[text()="View Cart"]'))
+        view_cart_button = wait.until(
+            EC.element_to_be_clickable((By.XPATH, '//u[text()="View Cart"]'))
         )
+        self.driver.execute_script("arguments[0].scrollIntoView(true);", view_cart_button)
         view_cart_button.click()
 
-        price = WebDriverWait(self.driver, 10).until(
+        price = wait.until(
             EC.presence_of_element_located((By.XPATH, '//*[@class="price"]'))
         )
         assert price.is_displayed(), 'Price'
 
-        quantity = WebDriverWait(self.driver, 10).until(
+        quantity = wait.until(
             EC.presence_of_element_located((By.XPATH, '//*[@class="quantity"]'))
         )
         assert quantity.is_displayed(), 'Quantity'
 
-        total = WebDriverWait(self.driver, 10).until(
+        total = wait.until(
             EC.presence_of_element_located((By.XPATH, '//*[@class="total"]'))
         )
         assert total.is_displayed(), 'Total'
@@ -460,15 +466,19 @@ class AutoExercise:
         view_cart_button.click()
 
     def view_product_button(self):
-        view_product_button = WebDriverWait(self.driver, 10).until(
+        wait = WebDriverWait(self.driver, 10)
+        view_product_button = wait.until(
             EC.presence_of_element_located((By.CSS_SELECTOR, "a[href='/product_details/1']"))
         )
+        self.driver.execute_script("arguments[0].scrollIntoView(true);", view_product_button)
         view_product_button.click()
 
     def increase_quantity_to_4(self):
-        increase_quantity_button = WebDriverWait(self.driver, 10).until(
+        wait = WebDriverWait(self.driver, 10)
+        increase_quantity_button = wait.until(
             EC.element_to_be_clickable((By.ID, "quantity"))
         )
+        self.driver.execute_script("arguments[0].scrollIntoView(true);", increase_quantity_button)
         increase_quantity_button.click()
         increase_quantity_button.clear()
         increase_quantity_button.send_keys("4")
@@ -695,23 +705,28 @@ class AutoExercise:
         )
         assert t_shirts_verify.is_displayed(), "'Tshirts Products' is not displayed"
 
-    def login_into_account_that_got_created(self):
-        login = WebDriverWait(self.driver, 10).until(
-            EC.presence_of_element_located((By.XPATH, '//*[@data-qa="login-email"]'))
-        )
-        login.click()
-        login.send_keys("ilikehotgirls@trump.com")
+    def login_into_account_that_got_created(self, user):
+        wait = WebDriverWait(self.driver, 10)
 
-        password = WebDriverWait(self.driver, 10).until(
-            EC.presence_of_element_located((By.XPATH, '//*[@data-qa="login-password"]'))
+        login = wait.until(EC.presence_of_element_located((By.XPATH, '//*[@data-qa="login-email"]')))
+        login.clear()
+        login.send_keys(user["email"])
+
+        password = wait.until(EC.presence_of_element_located((By.XPATH, '//*[@data-qa="login-password"]')))
+        password.clear()
+        password.send_keys(user["password"])
+        login_button = WebDriverWait(self.driver, 10).until(
+            EC.presence_of_element_located((By.XPATH, '//*[@data-qa="login-button"]'))
         )
-        password.click()
-        password.send_keys("12345678Aa")
+        login_button.click()
 
     def brands_verif(self):
         brands_verif = WebDriverWait(self.driver, 10).until(
             EC.presence_of_element_located((By.XPATH, '//h2[text()="Brands"]'))
         )
+
+        self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", brands_verif)
+
         assert brands_verif.is_displayed(), "'Brands' is not displayed"
 
     def biba_brand(self):
@@ -910,8 +925,9 @@ class AutoExercise:
         assert verify_top.is_displayed(), "'Full-fledged practice website for Automation Engineers is not displayed'"
 
     def verify_logged_in(self, expected_name: str):
-        element = WebDriverWait(self.driver, 10).until(
-            EC.presence_of_element_located((By.XPATH, "//*[@class='nav navbar-nav']"))
+        element = WebDriverWait(self.driver, 3).until(
+            EC.presence_of_element_located((By.XPATH, "//a[contains(text(),'Logged in as')]"))
         )
         text = element.text.strip()
         assert expected_name in text, f"Expected username '{expected_name}' not found in: «{text}»"
+
